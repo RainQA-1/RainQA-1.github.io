@@ -1,5 +1,5 @@
 /* 菜篮子 · 离线缓存（仅在 http/https 下生效，直接打开 index.html 不注册） */
-const CACHE_NAME = 'canteen-ledger-v2';
+const CACHE_NAME = 'canteen-ledger-v3';
 const APP_SHELL = [
   './',
   './index.html',

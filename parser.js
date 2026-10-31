@@ -393,6 +393,22 @@
     return pieces;
   }
 
+  // 很多微信记账习惯会把“10月8号，一筐鸡蛋，10月10号，两袋大米”写成一行。
+  // 在日期前补一个换行，让后面的逐行逻辑仍然适用。
+  function expandInlineDates(text) {
+    const withChineseDate = /(?:(\d{4})\s*[年\/.\-]\s*)?(\d{1,2})\s*月\s*(\d{1,2})\s*[日号]?/g;
+    const withIsoDate = /\d{4}\s*[\/.\-]\s*\d{1,2}\s*[\/.\-]\s*\d{1,2}(?!\d)/g;
+    return String(text)
+      .replace(withChineseDate, function (match, year, month, day, offset, whole) {
+        if (offset === 0 || whole.charAt(offset - 1) === '\n') return match;
+        return '\n' + match;
+      })
+      .replace(withIsoDate, function (match, offset, whole) {
+        if (offset === 0 || whole.charAt(offset - 1) === '\n') return match;
+        return '\n' + match;
+      });
+  }
+
   function removeMatch(work, match) {
     return {
       text: work.slice(0, match.index) + ' ' + work.slice(match.index + match[0].length),
@@ -646,7 +662,7 @@
       ? opts.today
       : (parseDateValue(opts.today) || new Date());
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const normalized = normalizeText(input);
+    const normalized = expandInlineDates(normalizeText(input));
     const lines = normalized.split('\n');
     const items = [];
     const warnings = [];
